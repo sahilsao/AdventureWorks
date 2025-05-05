@@ -1,6 +1,6 @@
 ﻿{
    "CodeGenerationMode": 5,
-   "ContextClassName": "AdventureWorks2014Context",
+   "ContextClassName": "AdventureWorksContext",
    "ContextNamespace": "",
    "FilterSchemas": false,
    "IncludeConnectionString": false,
@@ -481,7 +481,7 @@
    "UseManyToManyEntity": false,
    "UseNoDefaultConstructor": false,
    "UseNoNavigations": false,
-   "UseNoObjectFilter": true,
+   "UseNoObjectFilter": false,
    "UseNodaTime": false,
    "UseNullableReferences": false,
    "UsePrefixNavigationNaming": false,
