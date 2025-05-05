@@ -1,9 +1,43 @@
 ﻿@page "/person/login"
 
-<PageTitle>Home</PageTitle>
+@using AdventureWorks.Components.Layout
+@layout EmptyLayout
 
-<h1>PersonLogin</h1>
+<PageTitle>Person Login</PageTitle>
 
+<FluentGrid Justify="JustifyContent.FlexEnd" AdaptiveRendering=true>
+	<FluentGridItem sm="12" xs="12" lg="4" md="4">
+		<FluentCard Height="100%">
+			<FluentHeader>
+				Login
+			</FluentHeader>
+			<br />
+			<FluentStack Orientation="Orientation.Vertical" HorizontalAlignment="HorizontalAlignment.Stretch" VerticalGap="20">
+				<FluentTextField @bind-Value=userid TextFieldType="TextFieldType.Text" Placeholder="Enter Your User ID">User ID</FluentTextField>
+				<FluentTextField @bind-Value=password TextFieldType="TextFieldType.Password" Placeholder="Enter Your Password">Password</FluentTextField>
+			</FluentStack>
+			<br />
+			<FluentStack Orientation="Orientation.Vertical" HorizontalAlignment="HorizontalAlignment.End" VerticalGap="20">
+				<FluentButton IconStart="@(new Icons.Regular.Size16.Person())"
+							  Appearance="Appearance.Accent"
+							  Loading="@loading"
+							  OnClick="@StartLoadingAsync">
+					Login
+				</FluentButton>
+			</FluentStack>
+		</FluentCard>
+	</FluentGridItem>
+</FluentGrid>
 @code {
 
+	string? userid, password;
+
+	bool loading = false;
+
+	async Task StartLoadingAsync()
+	{
+		loading = true;
+		await Task.Delay(2000);
+		loading = false;
+	}
 }
