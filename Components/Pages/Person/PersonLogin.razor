@@ -2,19 +2,28 @@
 @page "/person/login"
 
 @using AdventureWorks.Components.Layout
+@using Icons = Microsoft.FluentUI.AspNetCore.Components.Icons
 @layout EmptyLayout
 
 <PageTitle>Person Login</PageTitle>
 
-<FluentGrid Justify="JustifyContent.FlexEnd" AdaptiveRendering=true>
+<FluentGrid Style="margin-top: 250px;" Justify="JustifyContent.FlexEnd" AdaptiveRendering=true>
 	<FluentGridItem sm="12" xs="12" lg="4" md="4">
-		<FluentCard Height="100%">
+		<FluentCard>
 			<FluentHeader>
 				Login
 			</FluentHeader>
 			<br />
-			<FluentStack Orientation="Orientation.Vertical" HorizontalAlignment="HorizontalAlignment.Stretch" VerticalGap="20">
-				<FluentTextField @bind-Value=userid TextFieldType="TextFieldType.Text" Placeholder="Enter Your User ID">User ID</FluentTextField>
+
+			<FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Right" VerticalGap="10">
+				<FluentLabel Typo=Typography.H5 Weight=FontWeight.Bold MarginBlock="30px">
+					adventure-works\
+				</FluentLabel>
+				<FluentTextField @bind-Value="userid" TextFieldType="TextFieldType.Text" Placeholder="Enter Your User ID">User Id</FluentTextField>
+			</FluentStack>
+
+
+			<FluentStack Orientation="Orientation.Vertical" HorizontalAlignment="HorizontalAlignment.Right" VerticalGap="10">
 				<FluentTextField @bind-Value=password TextFieldType="TextFieldType.Password" Placeholder="Enter Your Password">Password</FluentTextField>
 			</FluentStack>
 			<br />
@@ -29,6 +38,7 @@
 		</FluentCard>
 	</FluentGridItem>
 </FluentGrid>
+
 @code {
 
 	string? userid, password;
