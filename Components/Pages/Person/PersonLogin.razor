@@ -2,47 +2,53 @@
 @page "/person/login"
 
 @using AdventureWorks.Components.Layout
-@using Icons = Microsoft.FluentUI.AspNetCore.Components.Icons
+@using AdventureWorks.Data
+@using AdventureWorks.Models
+@using System.Security.Cryptography
+@using System.Text
+@using System.Linq
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.EntityFrameworkCore;
+
 @layout EmptyLayout
+@inject IToastService ToastService
+@inject AdventureWorksContext DbContext
 
 <PageTitle>Person Login</PageTitle>
 
-<FluentGrid Style="margin-top: 250px;" Justify="JustifyContent.FlexEnd" AdaptiveRendering=true>
-	<FluentGridItem sm="12" xs="12" lg="4" md="4">
-		<FluentCard>
-			<FluentHeader>
-				Login
-			</FluentHeader>
-			<br />
+<EditForm Model="loginModel" OnValidSubmit="HandleLogin">
+	<DataAnnotationsValidator />
+	<FluentValidationSummary />
+	<FluentGrid Justify="JustifyContent.FlexEnd" AdaptiveRendering=true>
+		<FluentGridItem sm="12" xs="12" lg="4" md="4">
 
-			<FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Right" VerticalGap="10">
-				<FluentLabel Typo=Typography.H5 Weight=FontWeight.Bold MarginBlock="30px">
-					adventure-works\
-				</FluentLabel>
-				<FluentTextField @bind-Value="userid" TextFieldType="TextFieldType.Text" Placeholder="Enter Your User ID">User Id</FluentTextField>
-			</FluentStack>
-
-
-			<FluentStack Orientation="Orientation.Vertical" HorizontalAlignment="HorizontalAlignment.Right" VerticalGap="10">
-				<FluentTextField @bind-Value=password TextFieldType="TextFieldType.Password" Placeholder="Enter Your Password">Password</FluentTextField>
-			</FluentStack>
-			<br />
-			<FluentStack Orientation="Orientation.Vertical" HorizontalAlignment="HorizontalAlignment.End" VerticalGap="20">
+			<FluentCard>
+				<FluentHeader>
+					Login
+				</FluentHeader>
+				<br />
+				<FluentStack Orientation="Orientation.Vertical" HorizontalAlignment="HorizontalAlignment.Stretch" VerticalGap="10">
+					<FluentTextField @bind-Value="loginModel.Email" TextFieldType="TextFieldType.Text" Placeholder="Enter Your User ID">User Id</FluentTextField>
+					
+					<FluentTextField @bind-Value="loginModel.Password" TextFieldType="TextFieldType.Password" Placeholder="Enter Your Password">Password</FluentTextField>
+					
+				</FluentStack>
+				<br />
 				<FluentButton IconStart="@(new Icons.Regular.Size16.Person())"
-							  Appearance="Appearance.Accent"
-							  Loading="@loading"
-							  OnClick="@StartLoadingAsync">
+				Appearance="Appearance.Accent"
+				Loading="@loading"
+				Type="ButtonType.Submit"
+				OnClick="@StartLoadingAsync">
 					Login
 				</FluentButton>
-			</FluentStack>
-		</FluentCard>
-	</FluentGridItem>
-</FluentGrid>
+			</FluentCard>
 
+		</FluentGridItem>
+	</FluentGrid>
+</EditForm>
 @code {
-
-	string? userid, password;
-
+	
 	bool loading = false;
 
 	async Task StartLoadingAsync()
@@ -51,4 +57,50 @@
 		await Task.Delay(2000);
 		loading = false;
 	}
+
+	private LoginModel loginModel = new();
+	private string ErrorMessage;
+
+	public class LoginModel
+	{
+		[Required]
+		public string Email { get; set; }
+
+		[Required]
+		public string Password { get; set; }
+	}
+
+	private async Task HandleLogin()
+	{	
+
+		var emailEntity = await DbContext.EmailAddresses
+			.FirstOrDefaultAsync(e => e.EmailAddress1 == loginModel.Email);
+
+		if (emailEntity == null)
+		{
+			ErrorMessage = "Invalid email or password.";
+			return;
+		}
+
+		var passwordEntity = await DbContext.Passwords
+			.FirstOrDefaultAsync(p => p.BusinessEntityID == emailEntity.BusinessEntityID);
+		
+		if (passwordEntity == null)
+		{
+			ErrorMessage = "Invalid email or password.";
+			return;
+		}		
+		
+		if (loginModel.Password == emailEntity.EmailAddress1)
+		{
+			ErrorMessage = ""; // Success
+			// You can store login state here using session/localStorage or authentication state provider
+			ToastService.ShowSuccess("Login Successful");
+		}
+		else
+		{
+			ErrorMessage = "Invalid email or password.";
+			ToastService.ShowError(ErrorMessage);
+		}
+	}	
 }
